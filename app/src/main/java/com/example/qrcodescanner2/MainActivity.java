@@ -22,6 +22,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.qrcodescanner2.fragments.AdminFragment;
+import com.example.qrcodescanner2.fragments.ManualFragment;
+import com.example.qrcodescanner2.fragments.MapFragment;
+import com.example.qrcodescanner2.fragments.ScanFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -257,48 +261,119 @@ import okhttp3.Response;
 //-----------------------------------
 
 
+//public class MainActivity extends AppCompatActivity {
+//
+//    TabLayout tabLayout;
+//    ViewPager2 viewPager2;
+//    MyViewPageAdapter myViewPageAdapter;
+//
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        EdgeToEdge.enable(this);
+//        setContentView(R.layout.activity_main);
+//
+//        viewPager2 = findViewById(R.id.view_pager);
+//        myViewPageAdapter =new MyViewPageAdapter(this);
+//        viewPager2.setAdapter(myViewPageAdapter);
+//
+//        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+//            @Override
+//            public void onTabSelected(TabLayout.Tab tab) {
+//                viewPager2.setCurrentItem(tab.getPosition());
+//            }
+//
+//            @Override
+//            public void onTabUnselected(TabLayout.Tab tab) {
+//
+//            }
+//
+//            @Override
+//            public void onTabReselected(TabLayout.Tab tab) {
+//
+//            }
+//        });
+//
+//        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+//            @Override
+//            public void onPageSelected(int position) {
+//                super.onPageSelected(position);
+//                tabLayout.getTabAt(position).select();
+//            }
+//        });
+//    }
+//}
+
+
+
+
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
+
 public class MainActivity extends AppCompatActivity {
 
-    TabLayout tabLayout;
     ViewPager2 viewPager2;
-    MyViewPageAdapter myViewPageAdapter;
+    MyViewPageAdapter myViewAdapter;
+    BottomNavigationView bottomNavigationView;
+    FrameLayout frameLayout;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        tabLayout = findViewById(R.id.tab_layout);
+
+        // Initialize views
         viewPager2 = findViewById(R.id.view_pager);
-        myViewPageAdapter =new MyViewPageAdapter(this);
-        viewPager2.setAdapter(myViewPageAdapter);
+        bottomNavigationView = findViewById(R.id.bottomNav);
+        frameLayout = findViewById(R.id.frameLayout);
 
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        // Set up the ViewPager2 with an adapter
+        myViewAdapter = new MyViewPageAdapter(this);
+        viewPager2.setAdapter(myViewAdapter);
+
+        // Handle BottomNavigationView item selections
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager2.setCurrentItem(tab.getPosition());
-            }
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment fragment = null;
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
+                // Use if-else to determine which fragment to load based on the selected item
+                if (item.getItemId() == R.id.scan) {
+                    fragment = new ScanFragment();
+                } else if (item.getItemId() == R.id.manual) {
+                    fragment = new ManualFragment();  // Use appropriate fragment
+                } else if (item.getItemId() == R.id.map) {
+                    fragment = new MapFragment();  // Use appropriate fragment
+                } else if (item.getItemId() == R.id.admin) {
+                    fragment = new AdminFragment();  // Use appropriate fragment
+                }
 
-            }
+                // If a fragment is selected, replace the FrameLayout with the new fragment
+                if (fragment != null) {
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.frameLayout, fragment)
+                            .commit();
 
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
+                    // Show the FrameLayout and hide the ViewPager2
+                    frameLayout.setVisibility(View.VISIBLE);
+                    viewPager2.setVisibility(View.GONE);
+                    return true;
+                }
 
+                return false;
             }
         });
-
-        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                tabLayout.getTabAt(position).select();
-            }
-        });
-
-
-
     }
 }

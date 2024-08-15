@@ -73,7 +73,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.6"
-                        android:text="Make"
+                        android:text="Meter Make"
                         android:textSize="14sp" />
                     <TextView
                         android:layout_width="wrap_content"

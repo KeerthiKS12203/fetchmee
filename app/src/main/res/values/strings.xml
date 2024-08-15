@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">FitMee</string>
+
+    <string-array name="meter_type_spinner">
+        <item>Select an option</item>
+        <item>1</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="url_security_options">
+        <item>@string/http_secure</item>
+        <item>@string/http_insecure</item>
+    </string-array>
+
+    <string name="my_map_api_key">AIzaSyBePILLMcjLElgmvFbR1ONZJu5Gs0udErk</string>
+
+    <string name="map_description">Co-ordinates located on map</string>
+    <string name="http_secure">Secure (HTTPS)</string>
+    <string name="http_insecure">Insecure (HTTP)</string>
+
+
+</resources>

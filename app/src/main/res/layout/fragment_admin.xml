@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".fragments.AdminFragment">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    >
+    <TextView
+    android:id="@+id/scan_page_label"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="20dp"
+    android:text="Scan Meter QR Code"
+    android:layout_marginBottom="20dp"
+    android:textSize="20sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/http_protocol"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="HTTP protocol"
+            android:textSize="16sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=":"
+            android:textSize="16sp" />
+
+        <Spinner
+            android:id="@+id/dropdown_http_protocol"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="20dp"
+            android:textSize="16sp"
+            tools:ignore="TouchTargetSizeCheck" />
+    </LinearLayout>
+
+    <!-- Domain Name Input -->
+    <EditText
+        android:id="@+id/editTextDomain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:enabled="false"
+        android:hint="Domain Name"
+        android:inputType="text"
+        android:minHeight="48dp"
+        android:textSize="16sp" />
+
+    <!-- Port Number Input -->
+    <EditText
+        android:id="@+id/editTextPort"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:enabled="false"
+        android:hint="Port Number"
+        android:inputType="number"
+        android:minHeight="48dp"
+        android:textSize="16sp" />
+
+    <!-- Base URL Display -->
+    <TextView
+        android:id="@+id/textViewBaseUrl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Base URL"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"
+        android:autoSizeMinTextSize="16sp"
+        />
+
+    <!-- Edit Button -->
+    <Button
+        android:id="@+id/buttonEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Edit"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Username and Password Inputs (Initially Hidden) -->
+    <LinearLayout
+        android:id="@+id/usernamePasswordLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:layout_marginBottom="16dp">
+
+        <EditText
+            android:id="@+id/editTextUsername"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Username"
+            android:inputType="text"
+            android:layout_marginEnd="8dp"/>
+
+        <EditText
+            android:id="@+id/editTextPassword"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Password"
+            android:inputType="textPassword"/>
+
+    </LinearLayout>
+
+    <!-- Submit Button (Initially Hidden) -->
+    <Button
+        android:id="@+id/buttonSubmit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:visibility="gone"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Done Button (Initially Hidden) -->
+    <Button
+        android:id="@+id/buttonDone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Done"
+        android:visibility="gone"/>
+</LinearLayout>
+</FrameLayout>

@@ -1,0 +1,265 @@
+package com.example.qrcodescanner2.fragments;
+
+import android.Manifest;
+import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+
+import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.text.Editable;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.qrcodescanner2.DataObject;
+import com.example.qrcodescanner2.GlobalVariables;
+import com.example.qrcodescanner2.R;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.regex.Pattern;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+public class ManualFragment extends Fragment {
+
+    FusedLocationProviderClient fusedLocationProviderClient;
+
+    EditText text_msn, text_meter_make, text_meter_model ,text_manufacture_yearmonth;
+    Spinner dropdown_meter_type;
+    TextView text_meter_ratings,text_loc_manual, text_api_call_status, api_call_status_label, api_call_status_colon;
+    String meter_ratings, loc;
+    Button manual_submit_details;
+
+    public ManualFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_manual, container, false);
+
+        dropdown_meter_type=(Spinner)view.findViewById(R.id.dropdown_meter_type);
+        SpinnerActivity spinnerActivity=new SpinnerActivity();
+        dropdown_meter_type.setOnItemSelectedListener(spinnerActivity);
+
+        text_msn=view.findViewById(R.id.text_msn);
+        text_meter_make=view.findViewById(R.id.text_meter_make);
+        text_meter_model=view.findViewById(R.id.text_meter_model);
+        text_manufacture_yearmonth=view.findViewById(R.id.text_manufacture_monthyear);
+        text_meter_ratings=view.findViewById(R.id.text_meter_ratings);
+        text_loc_manual=view.findViewById(R.id.text_loc_manual);
+        api_call_status_label=view.findViewById(R.id.api_call_status_label);
+        api_call_status_colon=view.findViewById(R.id.api_call_status_colon);
+        text_api_call_status=view.findViewById(R.id.text_api_call_status);
+        manual_submit_details=view.findViewById(R.id.manual_submit_details);
+        text_meter_ratings.setVisibility(View.GONE);
+        text_loc_manual.setVisibility(View.GONE);
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+
+
+        // Create an ArrayAdapter using the string array and a default spinner layout.
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                getActivity(),
+                R.array.meter_type_spinner,
+                android.R.layout.simple_spinner_item
+        );
+        // Specify the layout to use when the list of choices appears.
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner.
+        dropdown_meter_type.setAdapter(adapter);
+
+        manual_submit_details.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                validateMeterRatings(dropdown_meter_type.getSelectedItem().toString(), text_msn.getText().toString(), text_meter_make.getText().toString(), text_meter_model.getText().toString(), text_manufacture_yearmonth.getText().toString());
+            }
+        });
+
+        return view;
+    }
+
+    public class SpinnerActivity extends Activity implements AdapterView.OnItemSelectedListener {
+
+        public void onItemSelected(AdapterView<?> parent, View view,
+                                   int pos, long id) {
+            // An item is selected. You can retrieve the selected item using
+            // parent.getItemAtPosition(pos).
+            parent.getItemAtPosition(pos);
+        }
+
+        public void onNothingSelected(AdapterView<?> parent) {
+            // Another interface callback.
+        }
+    }
+
+    private void validateMeterRatings(String ct_ratings, String msn,String meter_make, String meter_model_type ,String meter_yearmonth) {
+        System.out.println("Validating");
+
+        String ct_ratings_pattern = "^([0-9]{3})[/-]([0-9]{0,3})$";
+        String meter_yearmonth_pattern = "^(0[1-9]|1[0-2])[/]([0-9]{4})$";
+        String msn_pattern = "^[A-Za-z0-9]{8,20}$";
+        String model_pattern = "^[A-Z0-9]{6,12}$";
+        String make_pattern = "^[A-Za-z]+$";
+
+
+        if(!(ct_ratings.equals("1") || ct_ratings.equals("3"))){
+            Toast.makeText(getActivity(), "CT rating is invalid", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(Pattern.matches(msn_pattern, msn)!=true){
+            Toast.makeText(getActivity(), "MSN is invalid", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(Pattern.matches(make_pattern,meter_make)!=true){
+            Toast.makeText(getActivity(), "Meter Make is invalid", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(Pattern.matches(model_pattern,meter_model_type)!=true){
+            Toast.makeText(getActivity(), "Model/Type is invalid", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(Pattern.matches(meter_yearmonth_pattern,meter_yearmonth)!=true){
+            Toast.makeText(getActivity(), "Month/Year is invalid", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        meter_ratings=ct_ratings+","+msn+","+meter_make+","+meter_model_type+","+meter_yearmonth;
+        GlobalVariables globalVariables=GlobalVariables.getInstance();
+        globalVariables.setMeterRatings(meter_ratings);
+        text_meter_ratings.setText(meter_ratings);
+        text_meter_ratings.setVisibility(View.VISIBLE);
+        getLastLocation();
+    }
+
+    private void getLastLocation() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
+            // Request high accuracy location
+            Task<Location> locationTask = fusedLocationProviderClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, null);
+
+            // Add a callback to handle the location result
+            locationTask.addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    // Handle the location result
+                    if(location!=null){
+                        loc="Latitude    : "+location.getLatitude()+"\nLongitude : "+location.getLongitude();
+                        GlobalVariables globalVariables=GlobalVariables.getInstance();
+                        globalVariables.setCurrentLatitude(location.getLatitude());
+                        globalVariables.setCurrentLongitude(location.getLongitude());
+                        globalVariables.setCurrentLocation(loc);
+                        text_loc_manual.setText(globalVariables.getCurrentLocation());
+                        text_loc_manual.setVisibility(View.VISIBLE);
+                        try {
+                            sendScannedDataToServer(globalVariables.getMeterRatings(), String.valueOf(location.getLatitude()),String.valueOf(location.getLongitude()));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+
+            });
+
+            // Add a callback to handle any errors
+            locationTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    // Handle the error
+                    Log.e("Location", "Error getting location", e);
+                }
+            });
+        }else{
+
+        }
+    }
+
+    private void sendScannedDataToServer(String scannedData, String lat, String lng) throws JSONException {
+        OkHttpClient client = new OkHttpClient();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy HHmmss");
+        // Format the current date and time using the SimpleDateFormat
+        String scanTimeDate = dateFormat.format(new Date());
+        String mode="M";
+        GlobalVariables globalVariables=GlobalVariables.getInstance();
+
+        DataObject wrapper = new DataObject(scannedData, lat,lng, mode,scanTimeDate);
+        JSONObject jsonObject = wrapper.createJsonObject();
+        RequestBody requestBody = RequestBody.create(jsonObject.toString(), MediaType.get("application/json"));
+
+        Request request = new Request.Builder()
+                .url(globalVariables.getSERVER_URL())
+                .post(requestBody)
+                .build();
+
+        api_call_status_label.setVisibility(View.VISIBLE);
+        api_call_status_colon.setVisibility(View.VISIBLE);
+        text_api_call_status.setVisibility(View.VISIBLE);
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getActivity(),  "Request failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        text_api_call_status.setText("Request failed: " + e.getMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String responseBody = response.body().string();
+                if (response.isSuccessful()) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            System.out.println("Server response: " + responseBody);
+                            Toast.makeText(getActivity(), "Request successful. Response code: " + response.code() + " - " + responseBody, Toast.LENGTH_SHORT).show();
+                            text_api_call_status.setText(response.code()+", Request successful.");
+                        }
+                    });
+                } else {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            System.out.println("Server response: " + responseBody);
+                            Toast.makeText(getActivity(), "Request unsuccessful. Response code: " + response.code() + " - " + responseBody, Toast.LENGTH_SHORT).show();
+                            text_api_call_status.setText(response.code()+", Request unsuccessful." );
+                        }
+                    });
+                }
+            }
+        });
+    }
+}

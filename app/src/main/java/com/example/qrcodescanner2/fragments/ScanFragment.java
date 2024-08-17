@@ -65,7 +65,7 @@ public class ScanFragment extends Fragment {
 
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Button scanBtn;
-    private TextView textStr, textLoc, textAndroidId, textApiCallStatus, apiCallStatusLabel, apiCallStatusColon;
+    private TextView textStr, textLoc, textAndroidId, text_comment, textApiCallStatus, apiCallStatusLabel, apiCallStatusColon;
     private String str, loc;
     private boolean locObtained = false, strObtained = false;
     private FrameLayout scannerContainer;
@@ -79,15 +79,16 @@ public class ScanFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkLocationPermission();
+        // Check for permissions
+        checkPermissions();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_scan, container, false);
 
+        // Initialize your views
         scanBtn = view.findViewById(R.id.scanner);
         textLoc = view.findViewById(R.id.text_loc);
         textStr = view.findViewById(R.id.text_str);
@@ -95,31 +96,42 @@ public class ScanFragment extends Fragment {
         textApiCallStatus = view.findViewById(R.id.text_api_call_status);
         apiCallStatusLabel = view.findViewById(R.id.api_call_status_label);
         apiCallStatusColon = view.findViewById(R.id.api_call_status_colon);
-        scannerContainer = view.findViewById(R.id.scanner_container);
+        scannerContainer = view.findViewById(R.id.scanner_container); // Initialize FrameLayout
+        text_comment = view.findViewById(R.id.text_comment);
 
+        // Set initial texts
         textLoc.setText("Location");
         textStr.setText("QR String");
         textAndroidId.setText("Android ID not obtained");
         textApiCallStatus.setText("API call: pending");
 
+        // Initialize location client
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
+        // Set Android ID in global variables
         GlobalVariables globalVariables = GlobalVariables.getInstance();
         String androidId = Settings.Secure.getString(getActivity().getContentResolver(), Settings.Secure.ANDROID_ID);
         globalVariables.setAndroidId(androidId);
         textAndroidId.setText(globalVariables.getAndroidId());
 
+        // Get server URL from global variables
         SERVER_URL = globalVariables.getSERVER_URL();
 
+        // Setup barcode view and start scanning
         setupBarcodeView();
         startScan();
 
+        // Set button click listener
         scanBtn.setOnClickListener(v -> {
             try {
                 if (strObtained && locObtained) {
-                    sendScannedDataToServer(globalVariables.getMeterRatings(), String.valueOf(globalVariables.getCurrentLatitude()), String.valueOf(globalVariables.getCurrentLongitude()));
+                    sendScannedDataToServer(globalVariables.getMeterRatings(),
+                            String.valueOf(globalVariables.getCurrentLatitude()),
+                            String.valueOf(globalVariables.getCurrentLongitude()));
                 } else {
-                    Toast.makeText(getActivity(), "Data not complete. Ensure QR code is scanned and location is obtained.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),
+                            "Data not complete. Ensure QR code is scanned and location is obtained.",
+                            Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
                 throw new RuntimeException(e);
@@ -130,68 +142,72 @@ public class ScanFragment extends Fragment {
     }
 
     private void setupBarcodeView() {
-        barcodeView = new CompoundBarcodeView(getContext());
-        barcodeView.setLayoutParams(new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT
-        ));
-//        barcodeView.setStatusText("");
-        scannerContainer.addView(barcodeView);
+        if (scannerContainer != null) {
+            barcodeView = new CompoundBarcodeView(getContext());
+            barcodeView.setLayoutParams(new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+            ));
+            scannerContainer.addView(barcodeView);
 
-        List<BarcodeFormat> formats = Arrays.asList(
-                BarcodeFormat.UPC_A,
-                BarcodeFormat.UPC_E,
-                BarcodeFormat.EAN_8,
-                BarcodeFormat.EAN_13,
-                BarcodeFormat.CODABAR,
-                BarcodeFormat.CODE_39,
-                BarcodeFormat.CODE_93,
-                BarcodeFormat.CODE_128,
-                BarcodeFormat.ITF,
-                BarcodeFormat.RSS_14,
-                BarcodeFormat.RSS_EXPANDED,
-                BarcodeFormat.QR_CODE,
-                BarcodeFormat.DATA_MATRIX,
-                BarcodeFormat.PDF_417,
-                BarcodeFormat.AZTEC,
-                BarcodeFormat.MAXICODE,
-                BarcodeFormat.UPC_EAN_EXTENSION
+            List<BarcodeFormat> formats = Arrays.asList(
+                    BarcodeFormat.UPC_A,
+                    BarcodeFormat.UPC_E,
+                    BarcodeFormat.EAN_8,
+                    BarcodeFormat.EAN_13,
+                    BarcodeFormat.CODABAR,
+                    BarcodeFormat.CODE_39,
+                    BarcodeFormat.CODE_93,
+                    BarcodeFormat.CODE_128,
+                    BarcodeFormat.ITF,
+                    BarcodeFormat.RSS_14,
+                    BarcodeFormat.RSS_EXPANDED,
+                    BarcodeFormat.QR_CODE,
+                    BarcodeFormat.DATA_MATRIX,
+                    BarcodeFormat.PDF_417,
+                    BarcodeFormat.AZTEC,
+                    BarcodeFormat.MAXICODE,
+                    BarcodeFormat.UPC_EAN_EXTENSION
+            );
 
-        );
+            barcodeView.getBarcodeView().setDecoderFactory(new DefaultDecoderFactory(formats));
 
-        // Create a barcode decoder to handle various barcode formats
-        barcodeView.getBarcodeView().setDecoderFactory(new DefaultDecoderFactory(formats));
-
-        barcodeView.decodeContinuous(new BarcodeCallback() {
-            @Override
-            public void barcodeResult(BarcodeResult result) {
-                str = result.getText();
-                if (str != null) {
-                    textStr.setText(str);
-                    GlobalVariables globalVariables = GlobalVariables.getInstance();
-                    globalVariables.setMeterRatings(str);
-                    strObtained = true;
-                    getLastLocation();
-                    barcodeView.pause(); // Pause scanning to prevent rapid re-scans
-                    barcodeView.resume(); // Resume scanning after processing
-                } else {
-                    Log.d("ScanFragment", "String is null");
+            barcodeView.decodeContinuous(new BarcodeCallback() {
+                @Override
+                public void barcodeResult(BarcodeResult result) {
+                    str = result.getText();
+                    if (str != null) {
+                        textStr.setText(str);
+                        GlobalVariables globalVariables = GlobalVariables.getInstance();
+                        globalVariables.setMeterRatings(str);
+                        strObtained = true;
+                        getLastLocation();
+                        barcodeView.pause(); // Pause scanning to prevent rapid re-scans
+                        barcodeView.resume(); // Resume scanning after processing
+                    } else {
+                        Log.d("ScanFragment", "String is null");
+                    }
                 }
-            }
 
-            @Override
-            public void possibleResultPoints(List<ResultPoint> resultPoints) {
-                // Handle possible result points if needed
-            }
-        });
+                @Override
+                public void possibleResultPoints(List<ResultPoint> resultPoints) {
+                    // Handle possible result points if needed
+                }
+            });
+        } else {
+            Log.e("ScanFragment", "scannerContainer is null. Cannot setup barcode view.");
+        }
     }
 
     private void startScan() {
-        scannerContainer.setVisibility(View.VISIBLE);
+        if (scannerContainer != null) {
+            scannerContainer.setVisibility(View.VISIBLE);
+        } else {
+            Log.e("ScanFragment", "scannerContainer is null. Cannot start scan.");
+        }
     }
 
-
-    private void checkLocationPermission() {
+    private void checkPermissions() {
         boolean cameraPermissionGranted = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
         boolean locationPermissionGranted = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
@@ -201,7 +217,7 @@ public class ScanFragment extends Fragment {
                             Manifest.permission.CAMERA,
                             Manifest.permission.ACCESS_FINE_LOCATION
                     },
-                    CAMERA_PERMISSION_REQUEST_CODE); // Use a single request code if handling both permissions together
+                    CAMERA_PERMISSION_REQUEST_CODE);
         } else {
             setupBarcodeView(); // Both permissions granted, proceed with setup
         }
@@ -223,42 +239,6 @@ public class ScanFragment extends Fragment {
             }
         }
     }
-
-
-//    private void checkLocationPermission() {
-//        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(getActivity(),
-//                    new String[]{Manifest.permission.CAMERA},
-//                    CAMERA_PERMISSION_REQUEST_CODE);
-//        }
-//        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(getActivity(), new String[]{
-//                    Manifest.permission.ACCESS_FINE_LOCATION
-//            }, LOCATION_PERMISSION_REQUEST_CODE);
-//        }
-//    }
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                setupBarcodeView();
-//                checkLocationPermission();
-//            } else {
-//                Toast.makeText(getActivity(), "Camera permission is required to scan QR codes.", Toast.LENGTH_LONG).show();
-//                getActivity().getSupportFragmentManager().popBackStack(); // Optionally, navigate away or disable functionality
-//                checkLocationPermission();
-//            }
-//        } else if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                getLastLocation();
-//            } else {
-//                Toast.makeText(getActivity(), "Location permission is required to obtain location.", Toast.LENGTH_SHORT).show();
-//                checkLocationPermission();
-//            }
-//        }
-//    }
 
     private void getLastLocation() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -283,11 +263,11 @@ public class ScanFragment extends Fragment {
         OkHttpClient client = new OkHttpClient();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         String scanTimeDate = dateFormat.format(new Date());
-        System.out.println("scanTimeDate: "+scanTimeDate);
+        Log.d("ScanFragment", "scanTimeDate: " + scanTimeDate);
         String mode = "S";
         GlobalVariables globalVariables = GlobalVariables.getInstance();
 
-        DataObject wrapper = new DataObject(scannedData, lat, lng, mode, scanTimeDate);
+        DataObject wrapper = new DataObject(scannedData, lat, lng, mode, text_comment.getText().toString(), scanTimeDate);
         JSONObject jsonObject = wrapper.createJsonObject();
         RequestBody requestBody = RequestBody.create(jsonObject.toString(), MediaType.get("application/json"));
 
@@ -329,12 +309,16 @@ public class ScanFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        barcodeView.pause();
+        if (barcodeView != null) {
+            barcodeView.pause();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        barcodeView.resume();
+        if (barcodeView != null) {
+            barcodeView.resume();
+        }
     }
 }

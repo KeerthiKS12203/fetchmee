@@ -186,6 +186,32 @@
                         tools:ignore="TouchTargetSizeCheck" />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="16dp">
+                    <TextView
+                        android:id="@+id/comment_label"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="Comment "
+                        android:layout_weight="0.5"
+                        android:layout_marginEnd="10dp"
+                        android:textSize="14sp" />
+
+                    <EditText
+                        android:id="@+id/text_comment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="Type your comment here"
+                        android:maxLines="3"
+                        android:minHeight="48dp"
+                        android:paddingStart="6dp"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
                 <!-- Meter Ratings -->
                 <TextView
                     android:id="@+id/text_meter_ratings"

@@ -36,12 +36,12 @@
                 android:layout_marginEnd="10dp"
                 android:layout_weight="0.5"
                 android:text="Android ID"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=":"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/text_android_id"
@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:paddingStart="6dp"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 />
 
         </LinearLayout>
@@ -76,12 +76,12 @@
             android:text="QR String"
             android:layout_weight="0.5"
             android:layout_marginEnd="10dp"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=":"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/text_str"
@@ -89,7 +89,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="6dp"
             android:layout_weight="1"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -106,20 +106,48 @@
             android:text="Location"
             android:layout_weight="0.5"
             android:layout_marginEnd="10dp"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=":"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
         <TextView
             android:id="@+id/text_loc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingStart="6dp"
             android:layout_weight="1"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
     </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/comment_label"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Comment "
+                android:layout_weight="0.5"
+                android:layout_marginEnd="10dp"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/text_comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Type your comment here"
+                android:maxLines="3"
+                android:minHeight="48dp"
+                android:paddingStart="6dp"
+                android:textSize="14sp" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -137,7 +165,7 @@
                 android:layout_weight="0.5"
                 android:layout_marginEnd="10dp"
                 android:visibility="gone"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@id/api_call_status_colon"
@@ -145,7 +173,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 android:text=":"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/text_api_call_status"
@@ -154,7 +182,7 @@
                 android:layout_weight="1"
                 android:paddingStart="6dp"
                 android:visibility="gone"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <Button

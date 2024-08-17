@@ -56,7 +56,7 @@ public class ManualFragment extends Fragment {
 
     EditText text_msn, text_meter_make, text_meter_model ,text_manufacture_yearmonth;
     Spinner dropdown_meter_type;
-    TextView text_meter_ratings,text_loc_manual, text_api_call_status, api_call_status_label, api_call_status_colon;
+    TextView text_meter_ratings,text_loc_manual, text_comment, text_api_call_status, api_call_status_label, api_call_status_colon;
     String meter_ratings, loc;
     Button manual_submit_details;
 
@@ -80,6 +80,7 @@ public class ManualFragment extends Fragment {
         text_manufacture_yearmonth=view.findViewById(R.id.text_manufacture_monthyear);
         text_meter_ratings=view.findViewById(R.id.text_meter_ratings);
         text_loc_manual=view.findViewById(R.id.text_loc_manual);
+        text_comment=view.findViewById(R.id.text_comment);
         api_call_status_label=view.findViewById(R.id.api_call_status_label);
         api_call_status_colon=view.findViewById(R.id.api_call_status_colon);
         text_api_call_status=view.findViewById(R.id.text_api_call_status);
@@ -287,7 +288,7 @@ public class ManualFragment extends Fragment {
             Toast.makeText(getActivity(), "Month/Year is invalid", Toast.LENGTH_SHORT).show();
             return;
         }
-        meter_ratings=ct_ratings+","+msn+","+meter_make+","+meter_model_type+","+meter_yearmonth;
+        meter_ratings=ct_ratings+", "+meter_make+", "+meter_model_type+", "+", "+msn+", "+meter_yearmonth;
         GlobalVariables globalVariables=GlobalVariables.getInstance();
         globalVariables.setMeterRatings(meter_ratings);
         text_meter_ratings.setText(meter_ratings);
@@ -345,7 +346,7 @@ public class ManualFragment extends Fragment {
         String mode="M";
         GlobalVariables globalVariables=GlobalVariables.getInstance();
 
-        DataObject wrapper = new DataObject(scannedData, lat,lng, mode,scanTimeDate);
+        DataObject wrapper = new DataObject(scannedData, lat, lng, mode, text_comment.getText().toString(), scanTimeDate);
         JSONObject jsonObject = wrapper.createJsonObject();
         RequestBody requestBody = RequestBody.create(jsonObject.toString(), MediaType.get("application/json"));
 

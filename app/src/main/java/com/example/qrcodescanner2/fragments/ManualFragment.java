@@ -288,7 +288,7 @@ public class ManualFragment extends Fragment {
             Toast.makeText(getActivity(), "Month/Year is invalid", Toast.LENGTH_SHORT).show();
             return;
         }
-        meter_ratings=ct_ratings+", "+meter_make+", "+meter_model_type+", "+", "+msn+", "+meter_yearmonth;
+        meter_ratings=ct_ratings+", "+meter_make+", "+meter_model_type+", "+msn+", "+meter_yearmonth;
         GlobalVariables globalVariables=GlobalVariables.getInstance();
         globalVariables.setMeterRatings(meter_ratings);
         text_meter_ratings.setText(meter_ratings);

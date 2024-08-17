@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:text="Meter Ratings"
             android:textSize="20sp"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="30dp" />
 
         <!-- Scrollable content -->
         <ScrollView

@@ -2,7 +2,6 @@
     <string name="app_name">FitMee</string>
 
     <string-array name="meter_type_spinner">
-        <item>Select an option</item>
         <item>1</item>
         <item>3</item>
     </string-array>

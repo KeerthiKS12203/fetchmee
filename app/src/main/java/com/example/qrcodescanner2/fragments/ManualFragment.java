@@ -100,6 +100,8 @@ public class ManualFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner.
         dropdown_meter_type.setAdapter(adapter);
+        dropdown_meter_type.setSelection(0);
+
 
         manual_submit_details.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -260,8 +262,8 @@ public class ManualFragment extends Fragment {
 
         String ct_ratings_pattern = "^([0-9]{3})[/-]([0-9]{0,3})$";
         String meter_yearmonth_pattern = "^(0[1-9]|1[0-2])[/]([0-9]{4})$";
-        String msn_pattern = "^[A-Za-z0-9]{8,20}$";
-        String model_pattern = "^[A-Z0-9]{6,12}$";
+        String msn_pattern = "^[0-9]{6}$";
+        String model_pattern = "^[A-Z0-9]{6}$";
         String make_pattern = "^[A-Za-z]+$";
 
 

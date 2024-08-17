@@ -61,6 +61,8 @@ import okhttp3.Response;
 public class ScanFragment extends Fragment {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 101;
+
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Button scanBtn;
     private TextView textStr, textLoc, textAndroidId, textApiCallStatus, apiCallStatusLabel, apiCallStatusColon;
@@ -77,6 +79,7 @@ public class ScanFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkLocationPermission();
     }
 
     @Override
@@ -107,7 +110,6 @@ public class ScanFragment extends Fragment {
         textAndroidId.setText(globalVariables.getAndroidId());
 
         SERVER_URL = globalVariables.getSERVER_URL();
-        checkLocationPermission();
 
         setupBarcodeView();
         startScan();
@@ -133,6 +135,7 @@ public class ScanFragment extends Fragment {
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT
         ));
+//        barcodeView.setStatusText("");
         scannerContainer.addView(barcodeView);
 
         List<BarcodeFormat> formats = Arrays.asList(
@@ -187,26 +190,75 @@ public class ScanFragment extends Fragment {
         scannerContainer.setVisibility(View.VISIBLE);
     }
 
+
     private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{
-                    Manifest.permission.ACCESS_FINE_LOCATION
-            }, LOCATION_PERMISSION_REQUEST_CODE);
+        boolean cameraPermissionGranted = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        boolean locationPermissionGranted = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
+        if (!cameraPermissionGranted || !locationPermissionGranted) {
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{
+                            Manifest.permission.CAMERA,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                    },
+                    CAMERA_PERMISSION_REQUEST_CODE); // Use a single request code if handling both permissions together
+        } else {
+            setupBarcodeView(); // Both permissions granted, proceed with setup
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted
-                getLastLocation();
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            boolean cameraPermissionGranted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            boolean locationPermissionGranted = grantResults.length > 1 && grantResults[1] == PackageManager.PERMISSION_GRANTED;
+
+            if (cameraPermissionGranted && locationPermissionGranted) {
+                setupBarcodeView();
+                getLastLocation(); // Request location if both permissions are granted
             } else {
-                Toast.makeText(getActivity(), "Location permission denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Both camera and location permissions are required.", Toast.LENGTH_LONG).show();
+                getActivity().getSupportFragmentManager().popBackStack(); // Optionally navigate away
             }
         }
     }
+
+
+//    private void checkLocationPermission() {
+//        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(getActivity(),
+//                    new String[]{Manifest.permission.CAMERA},
+//                    CAMERA_PERMISSION_REQUEST_CODE);
+//        }
+//        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(getActivity(), new String[]{
+//                    Manifest.permission.ACCESS_FINE_LOCATION
+//            }, LOCATION_PERMISSION_REQUEST_CODE);
+//        }
+//    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                setupBarcodeView();
+//                checkLocationPermission();
+//            } else {
+//                Toast.makeText(getActivity(), "Camera permission is required to scan QR codes.", Toast.LENGTH_LONG).show();
+//                getActivity().getSupportFragmentManager().popBackStack(); // Optionally, navigate away or disable functionality
+//                checkLocationPermission();
+//            }
+//        } else if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                getLastLocation();
+//            } else {
+//                Toast.makeText(getActivity(), "Location permission is required to obtain location.", Toast.LENGTH_SHORT).show();
+//                checkLocationPermission();
+//            }
+//        }
+//    }
 
     private void getLastLocation() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {

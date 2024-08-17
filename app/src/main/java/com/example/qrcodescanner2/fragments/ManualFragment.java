@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -106,6 +107,136 @@ public class ManualFragment extends Fragment {
                 validateMeterRatings(dropdown_meter_type.getSelectedItem().toString(), text_msn.getText().toString(), text_meter_make.getText().toString(), text_meter_model.getText().toString(), text_manufacture_yearmonth.getText().toString());
             }
         });
+
+        text_manufacture_yearmonth.addTextChangedListener(new TextWatcher() {
+            private boolean mEditing = false;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No action needed before text is changed
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // No action needed while text is changing
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (mEditing) return; // Avoid recursive calls
+
+                mEditing = true;
+
+                // Save the current cursor position
+                int cursorPosition = text_manufacture_yearmonth.getSelectionStart();
+
+                // Get the current text and remove any non-numeric characters
+                String input = s.toString().replaceAll("[^0-9]", "");
+
+                // Limit to 6 characters for MMYYYY
+                if (input.length() > 6) {
+                    input = input.substring(0, 6);
+                }
+
+                // Initialize formatted input
+                StringBuilder formattedInput = new StringBuilder();
+
+                if (input.length() > 0) {
+                    // Add month part
+                    if (input.length() > 2) {
+                        formattedInput.append(input.substring(0, 2));
+                        // Add slash and year part
+                        formattedInput.append("/").append(input.substring(2));
+                    } else {
+                        // Handle single or partial months
+                        String monthPart = input;
+                        if (monthPart.length() == 1) {
+                            // Single digit month, ensure it has leading zero
+                            if(Integer.parseInt(monthPart)>1) {
+                                monthPart = "0" + monthPart;
+                            }
+                        }
+                        formattedInput.append(monthPart);
+                    }
+                }
+
+                // Validate and correct the month range
+                if (formattedInput.length() >= 2) {
+                    try {
+                        int month = Integer.parseInt(formattedInput.substring(0, 2));
+                        if (month > 12) {
+                            // Set month part to 12 if invalid month is entered
+                            formattedInput = new StringBuilder("12");
+                            if (formattedInput.length() > 2) {
+                                formattedInput.append("/").append(formattedInput.substring(3));
+                            }
+                        } else if (month < 1) {
+                            // Set month part to 01 if invalid month is entered
+                            formattedInput = new StringBuilder("01");
+                            if (formattedInput.length() > 2) {
+                                formattedInput.append("/").append(formattedInput.substring(3));
+                            }
+                        }
+                    } catch (NumberFormatException e) {
+                        // Handle the exception if parsing fails
+                    }
+                }
+
+                // Set the formatted text
+                s.replace(0, s.length(), formattedInput.toString());
+                text_manufacture_yearmonth.setSelection(formattedInput.length());
+
+                mEditing = false;
+            }
+
+
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                if (mEditing) return; // Avoid recursive calls
+//
+//                mEditing = true;
+//
+//                // Remove any non-numeric characters
+//                String input = s.toString().replaceAll("[^0-9]", "");
+//
+//                // Limit to 6 characters for MMYYYY
+//                if (input.length() > 6) {
+//                    input = input.substring(0, 6);
+//                }
+//
+//                // Format input as MM/YYYY
+//                String formattedInput = "";
+//                if (input.length() > 0) {
+//                    // Add month part
+//                    formattedInput = input.length() > 2 ? input.substring(0, 2) : input;
+//                    // Add slash and year part
+//                    if (input.length() > 2) {
+//                        formattedInput += "/" + input.substring(2);
+//                    }
+//                }
+//
+//                // Validate month range
+//                if (formattedInput.length() >= 2 && Integer.parseInt(formattedInput.substring(0, 2)) > 12) {
+//                    // Set month part to 12 if invalid month is entered
+//                    formattedInput = "12/" + formattedInput.substring(3);
+//                }
+//
+//                // Set the formatted text
+//                s.clear();
+//                s.append(formattedInput);
+//
+//                // Move cursor to the end of the input
+//                int length = s.length();
+//                if (length > 0) {
+//                    text_manufacture_yearmonth.setSelection(length);
+//                }
+//
+//                mEditing = false;
+//            }
+        });
+
+
+
 
         return view;
     }
@@ -205,9 +336,10 @@ public class ManualFragment extends Fragment {
 
     private void sendScannedDataToServer(String scannedData, String lat, String lng) throws JSONException {
         OkHttpClient client = new OkHttpClient();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy HHmmss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         // Format the current date and time using the SimpleDateFormat
         String scanTimeDate = dateFormat.format(new Date());
+        System.out.println("scanTimeDate: "+scanTimeDate);
         String mode="M";
         GlobalVariables globalVariables=GlobalVariables.getInstance();
 

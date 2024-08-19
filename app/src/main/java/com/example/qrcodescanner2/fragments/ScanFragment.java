@@ -22,6 +22,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.qrcodescanner2.BaseFragment;
 import com.example.qrcodescanner2.DataObject;
 import com.example.qrcodescanner2.GlobalVariables;
 import com.example.qrcodescanner2.R;
@@ -58,7 +59,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
-public class ScanFragment extends Fragment {
+public class ScanFragment extends BaseFragment {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 101;
@@ -98,6 +99,7 @@ public class ScanFragment extends Fragment {
         apiCallStatusColon = view.findViewById(R.id.api_call_status_colon);
         scannerContainer = view.findViewById(R.id.scanner_container); // Initialize FrameLayout
         text_comment = view.findViewById(R.id.text_comment);
+        textApiCallStatus.setTextColor(getResources().getColor(R.color.black) ); // Change text color to red
 
         // Set initial texts
         textLoc.setText("Location");
@@ -128,6 +130,7 @@ public class ScanFragment extends Fragment {
                     sendScannedDataToServer(globalVariables.getMeterRatings(),
                             String.valueOf(globalVariables.getCurrentLatitude()),
                             String.valueOf(globalVariables.getCurrentLongitude()));
+
                 } else {
                     Toast.makeText(getActivity(),
                             "Data not complete. Ensure QR code is scanned and location is obtained.",
@@ -246,7 +249,7 @@ public class ScanFragment extends Fragment {
 
             locationTask.addOnSuccessListener(location -> {
                 if (location != null) {
-                    loc = "Latitude: " + location.getLatitude() + "\nLongitude: " + location.getLongitude();
+                    loc = "Lat: " + location.getLatitude() + "\nLng: " + location.getLongitude();
                     GlobalVariables globalVariables = GlobalVariables.getInstance();
                     globalVariables.setCurrentLatitude(location.getLatitude());
                     globalVariables.setCurrentLongitude(location.getLongitude());
@@ -254,6 +257,7 @@ public class ScanFragment extends Fragment {
                     textLoc.setText(globalVariables.getCurrentLocation());
                     locObtained = true;
                     scanBtn.setVisibility(View.VISIBLE);
+                    scanBtn.setEnabled(true);
                 }
             }).addOnFailureListener(e -> Log.e("Location", "Error getting location", e));
         }
@@ -285,8 +289,9 @@ public class ScanFragment extends Fragment {
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
                 getActivity().runOnUiThread(() -> {
-                    Toast.makeText(getActivity(), "Request failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    textApiCallStatus.setText("Request failed: " + e.getMessage());
+                    Toast.makeText(getActivity(), "Sorry, something went wrong. Please try again later.", Toast.LENGTH_SHORT).show();
+                    textApiCallStatus.setTextColor(getResources().getColor(R.color.black) ); // Change text color to red
+                    textApiCallStatus.setText("Error: Please try again later.");
                 });
             }
 
@@ -295,11 +300,14 @@ public class ScanFragment extends Fragment {
                 final String responseBody = response.body().string();
                 getActivity().runOnUiThread(() -> {
                     if (response.isSuccessful()) {
-                        Toast.makeText(getActivity(), "Request successful. Response code: " + response.code() + " - " + responseBody, Toast.LENGTH_SHORT).show();
-                        textApiCallStatus.setText(response.code() + ", Request successful.");
+                        Toast.makeText(getActivity(), "Recorded Successfully", Toast.LENGTH_SHORT).show();
+                        textApiCallStatus.setTextColor(getResources().getColor(R.color.green) ); // Change text color to red
+                        textApiCallStatus.setText("Recorded Successfully");
+
                     } else {
-                        Toast.makeText(getActivity(), "Request unsuccessful. Response code: " + response.code() + " - " + responseBody, Toast.LENGTH_SHORT).show();
-                        textApiCallStatus.setText(response.code() + ", Request unsuccessful.");
+                        Toast.makeText(getActivity(), "Record Failed", Toast.LENGTH_SHORT).show();
+                        textApiCallStatus.setTextColor(getResources().getColor(R.color.red) ); // Change text color to red
+                        textApiCallStatus.setText("Record Failed" );
                     }
                 });
             }

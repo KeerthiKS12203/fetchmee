@@ -36,13 +36,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="16dp">
+                    android:layout_marginBottom="5dp">
 
                     <TextView
                         android:id="@+id/meter_type_label"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.6"
+                        android:layout_weight="0.55"
                         android:text="Meter Type"
                         android:textSize="14sp" />
                     <TextView
@@ -66,13 +66,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="16dp">
+                    android:layout_marginBottom="5dp">
 
                     <TextView
                         android:id="@+id/meter_make_label"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.6"
+                        android:layout_weight="0.55"
                         android:text="Meter Make"
                         android:textSize="14sp" />
                     <TextView
@@ -98,13 +98,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="16dp">
+                    android:layout_marginBottom="5dp">
 
                     <TextView
                         android:id="@+id/meter_model_label"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.6"
+                        android:layout_weight="0.55"
                         android:text="Meter Model"
                         android:textSize="14sp" />
                     <TextView
@@ -119,6 +119,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:hint="Model/Type"
+                        android:maxLength="5"
                         android:singleLine="true"
                         android:textSize="14sp"
                         tools:ignore="TouchTargetSizeCheck" />
@@ -129,13 +130,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="16dp">
+                    android:layout_marginBottom="5dp">
 
                     <TextView
                         android:id="@+id/msn_label"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.6"
+                        android:layout_weight="0.55"
                         android:text="Meter Serial Number"
                         android:textSize="14sp" />
                     <TextView
@@ -150,6 +151,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:hint="MSN"
+                        android:maxLength="7"
                         android:singleLine="true"
                         android:textSize="14sp"
                         tools:ignore="TouchTargetSizeCheck" />
@@ -160,13 +162,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="16dp">
+                    android:layout_marginBottom="5dp">
 
                     <TextView
                         android:id="@+id/manufacture_monthyear_label"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.6"
+                        android:layout_weight="0.55"
                         android:text="Meter Manufacture"
                         android:textSize="14sp" />
                     <TextView
@@ -189,20 +191,25 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginBottom="16dp">
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="5dp">
                     <TextView
                         android:id="@+id/comment_label"
                         android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:text="Comment "
-                        android:layout_weight="0.5"
-                        android:layout_marginEnd="10dp"
+                        android:layout_weight="0.55"
                         android:textSize="14sp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=":"
+                        android:textSize="16sp" />
+
 
                     <EditText
                         android:id="@+id/text_comment"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:hint="Type your comment here"

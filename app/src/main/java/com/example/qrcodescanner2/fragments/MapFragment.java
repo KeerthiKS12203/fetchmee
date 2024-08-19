@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.qrcodescanner2.BaseFragment;
 import com.example.qrcodescanner2.GlobalVariables;
 import com.example.qrcodescanner2.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -19,7 +20,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends BaseFragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private static final LatLng DEFAULT_LOCATION = new LatLng(12.9716, 77.5946); // Bangalore

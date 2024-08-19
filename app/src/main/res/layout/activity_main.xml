@@ -7,6 +7,9 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <include
+        layout="@layout/toolbar" />
+
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
@@ -25,6 +28,7 @@
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         app:menu="@menu/bottom_nav"
         app:labelVisibilityMode="labeled"/>
 </LinearLayout>

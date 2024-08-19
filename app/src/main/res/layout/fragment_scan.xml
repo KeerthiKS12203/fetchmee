@@ -29,7 +29,7 @@
                 android:id="@+id/android_id_label"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5"
+                android:layout_weight="0.35"
                 android:text="Android ID"
                 android:textSize="14sp" />
             <TextView
@@ -64,8 +64,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="QR String"
-                android:layout_weight="0.5"
-                android:layout_marginEnd="10dp"
+                android:layout_weight="0.35"
                 android:textSize="14sp" />
             <TextView
                 android:layout_width="wrap_content"
@@ -91,8 +90,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Location"
-                android:layout_weight="0.5"
-                android:layout_marginEnd="10dp"
+                android:layout_weight="0.35"
                 android:textSize="14sp" />
             <TextView
                 android:layout_width="wrap_content"
@@ -111,20 +109,29 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:layout_marginBottom="5dp">
             <TextView
                 android:id="@+id/comment_label"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="Comment"
+                android:layout_width="0dp"
+                android:text="Comment "
+                android:layout_weight="0.35"
                 android:textSize="14sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=":"
+                android:textSize="16sp" />
+
+
             <EditText
                 android:id="@+id/text_comment"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:hint="Type your comment here"
-                android:lines="3"
+                android:lines="2"
                 android:maxLength="50"
                 android:minHeight="48dp"
                 android:paddingStart="6dp"
@@ -142,7 +149,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="API Post Status"
-                android:layout_weight="0.5"
+                android:layout_weight="0.35"
                 android:layout_marginEnd="10dp"
                 android:visibility="gone"
                 android:textSize="14sp" />
@@ -169,7 +176,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_margin="10dp"
-            android:visibility="gone"
+            android:visibility="visible"
+            android:enabled="false"
             android:text="Upload" />
     </LinearLayout>
 </FrameLayout>

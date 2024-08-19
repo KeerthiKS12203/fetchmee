@@ -4,6 +4,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
@@ -342,6 +343,15 @@ public class MainActivity extends AppCompatActivity {
         // Set up the ViewPager2 with an adapter
         myViewAdapter = new MyViewPageAdapter(this);
         viewPager2.setAdapter(myViewAdapter);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+// Get the version info and set it in the toolbar
+        TextView versionTextView = findViewById(R.id.versionTextView);
+        String version = VersionUtils.getVersionInfo();
+        versionTextView.setText("Version: " + version);
+
 
         // Handle BottomNavigationView item selections
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {

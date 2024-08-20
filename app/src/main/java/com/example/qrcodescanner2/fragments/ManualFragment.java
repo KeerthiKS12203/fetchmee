@@ -24,6 +24,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.qrcodescanner2.BaseFragment;
 import com.example.qrcodescanner2.DataObject;
 import com.example.qrcodescanner2.GlobalVariables;
 import com.example.qrcodescanner2.R;
@@ -50,7 +51,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ManualFragment extends Fragment {
+public class ManualFragment  extends BaseFragment {
 
     FusedLocationProviderClient fusedLocationProviderClient;
 
@@ -263,17 +264,13 @@ public class ManualFragment extends Fragment {
 
         String ct_ratings_pattern = "^([0-9]{3})[/-]([0-9]{0,3})$";
         String meter_yearmonth_pattern = "^(0[1-9]|1[0-2])[/]([0-9]{4})$";
-        String msn_pattern = "^[0-9]{6}$";
-        String model_pattern = "^[A-Z0-9]{6}$";
+        String msn_pattern = "^[0-9]{7}$";
+        String model_pattern = "^[A-Z0-9]{5}$";
         String make_pattern = "^[A-Za-z]+$";
 
 
         if(!(ct_ratings.equals("1") || ct_ratings.equals("3"))){
-            Toast.makeText(getActivity(), "CT rating is invalid", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if(Pattern.matches(msn_pattern, msn)!=true){
-            Toast.makeText(getActivity(), "MSN is invalid", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Meter Type is invalid", Toast.LENGTH_SHORT).show();
             return;
         }
         if(Pattern.matches(make_pattern,meter_make)!=true){
@@ -281,14 +278,18 @@ public class ManualFragment extends Fragment {
             return;
         }
         if(Pattern.matches(model_pattern,meter_model_type)!=true){
-            Toast.makeText(getActivity(), "Model/Type is invalid", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Please enter a valid 5-character alphanumeric Meter Model", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(Pattern.matches(msn_pattern, msn)!=true){
+            Toast.makeText(getActivity(), "Please enter a valid 7-digit MSN", Toast.LENGTH_SHORT).show();
             return;
         }
         if(Pattern.matches(meter_yearmonth_pattern,meter_yearmonth)!=true){
             Toast.makeText(getActivity(), "Month/Year is invalid", Toast.LENGTH_SHORT).show();
             return;
         }
-        meter_ratings=ct_ratings+", "+meter_make+", "+meter_model_type+", "+msn+", "+meter_yearmonth;
+        meter_ratings=ct_ratings+", "+meter_make+", "+meter_model_type+", "+", "+msn+", "+meter_yearmonth;
         GlobalVariables globalVariables=GlobalVariables.getInstance();
         globalVariables.setMeterRatings(meter_ratings);
         text_meter_ratings.setText(meter_ratings);
@@ -366,8 +367,9 @@ public class ManualFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getActivity(),  "Request failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        text_api_call_status.setText("Request failed: " + e.getMessage());
+                        Toast.makeText(getActivity(), "Sorry, something went wrong. Please try again later.", Toast.LENGTH_SHORT).show();
+                        text_api_call_status.setTextColor(getResources().getColor(R.color.black) ); // Change text color to red
+                        text_comment.setText("Error: Please try again later.");
                     }
                 });
             }
@@ -380,17 +382,18 @@ public class ManualFragment extends Fragment {
                         @Override
                         public void run() {
                             System.out.println("Server response: " + responseBody);
-                            Toast.makeText(getActivity(), "Request successful. Response code: " + response.code() + " - " + responseBody, Toast.LENGTH_SHORT).show();
-                            text_api_call_status.setText(response.code()+", Request successful.");
+                            Toast.makeText(getActivity(), "Recorded Successfully", Toast.LENGTH_SHORT).show();
+                            text_api_call_status.setTextColor(getResources().getColor(R.color.green) ); // Change text color to red
+                            text_api_call_status.setText("Recorded Successfully");
                         }
                     });
                 } else {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            System.out.println("Server response: " + responseBody);
-                            Toast.makeText(getActivity(), "Request unsuccessful. Response code: " + response.code() + " - " + responseBody, Toast.LENGTH_SHORT).show();
-                            text_api_call_status.setText(response.code()+", Request unsuccessful." );
+                            Toast.makeText(getActivity(), "Record Failed", Toast.LENGTH_SHORT).show();
+                            text_api_call_status.setTextColor(getResources().getColor(R.color.red) ); // Change text color to red
+                            text_api_call_status.setText("Record Failed" );
                         }
                     });
                 }

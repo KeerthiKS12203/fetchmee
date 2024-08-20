@@ -78,7 +78,7 @@ public class GlobalVariables  extends Application {
         Server_domain_name="devmdas.fetchmee.in";
         Server_port_no="15000";
         HTTP_protocol="http";
-        SERVER_URL="http://devmdas.fetchmee.in:15000/androidId/info/gps/1";
+        SERVER_URL="http://devmdas.fetchmee.in:15000/androidId/info/g-gps/1";
 
     }
     public static GlobalVariables getInstance() {
@@ -91,7 +91,7 @@ public class GlobalVariables  extends Application {
 
     public void setAndroidId(String value) {
         AndroidId = value;
-        SERVER_URL=HTTP_protocol+ "://"+Server_domain_name+":"+Server_port_no+"/"+AndroidId+"/info/gps/1";
+        SERVER_URL=HTTP_protocol+ "://"+Server_domain_name+":"+Server_port_no+"/"+AndroidId+"/info/g-gps/1";
     }
 
     public String getMeterRatings() {
@@ -116,7 +116,7 @@ public class GlobalVariables  extends Application {
 
     public void setSERVER_URL(String SERVER_URL) {
         this.SERVER_URL = SERVER_URL;
-//        SERVER_URL=HTTP_protocol+"://"+Server_domain_name+":"+Server_port_no+"/"+AndroidId+"/info/gps/1";
+//        SERVER_URL=HTTP_protocol+"://"+Server_domain_name+":"+Server_port_no+"/"+AndroidId+"/info/g-gps/1";
     }
 
     public String getServer_domain_name() {
@@ -125,7 +125,7 @@ public class GlobalVariables  extends Application {
 
     public void setServer_domain_name(String server_domain_name) {
         Server_domain_name = server_domain_name;
-        SERVER_URL=HTTP_protocol+"://"+Server_domain_name+":"+Server_port_no+"/"+AndroidId+"/info/gps/1";
+        SERVER_URL=HTTP_protocol+"://"+Server_domain_name+":"+Server_port_no+"/"+AndroidId+"/info/g-gps/1";
     }
 
     public String getServer_port_no() {
@@ -134,7 +134,7 @@ public class GlobalVariables  extends Application {
 
     public void setServer_port_no(String server_port_no) {
         Server_port_no = server_port_no;
-        SERVER_URL=HTTP_protocol+"://"+Server_domain_name+":"+Server_port_no+"/"+AndroidId+"/info/gps/1";
+        SERVER_URL=HTTP_protocol+"://"+Server_domain_name+":"+Server_port_no+"/"+AndroidId+"/info/g-gps/1";
     }
 
 }

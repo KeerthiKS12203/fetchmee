@@ -20,10 +20,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.qrcodescanner2.BaseFragment;
 import com.example.qrcodescanner2.GlobalVariables;
 import com.example.qrcodescanner2.R;
 
-public class AdminFragment extends Fragment {
+public class AdminFragment extends BaseFragment {
 
     private EditText editTextDomain;
     private EditText editTextPort;

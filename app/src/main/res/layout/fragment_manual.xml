@@ -16,20 +16,10 @@
             android:id="@+id/meter_ratings_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Meter Ratings"
+            android:text="Meter Information"
             android:textSize="20sp"
             android:layout_marginBottom="30dp" />
 
-        <!-- Scrollable content -->
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fillViewport="true">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
 
                 <!-- CT Ratio -->
                 <LinearLayout
@@ -42,8 +32,8 @@
                         android:id="@+id/meter_type_label"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.55"
-                        android:text="Meter Type"
+                        android:layout_weight="0.6"
+                        android:text="Type *"
                         android:textSize="14sp" />
                     <TextView
                         android:layout_width="wrap_content"
@@ -72,8 +62,8 @@
                         android:id="@+id/meter_make_label"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.55"
-                        android:text="Meter Make"
+                        android:layout_weight="0.6"
+                        android:text="Make *"
                         android:textSize="14sp" />
                     <TextView
                         android:layout_width="wrap_content"
@@ -104,8 +94,8 @@
                         android:id="@+id/meter_model_label"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.55"
-                        android:text="Meter Model"
+                        android:layout_weight="0.6"
+                        android:text="Model *"
                         android:textSize="14sp" />
                     <TextView
                         android:layout_width="wrap_content"
@@ -136,8 +126,8 @@
                         android:id="@+id/msn_label"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.55"
-                        android:text="Meter Serial Number"
+                        android:layout_weight="0.6"
+                        android:text="Meter Serial Number *"
                         android:textSize="14sp" />
                     <TextView
                         android:layout_width="wrap_content"
@@ -168,8 +158,8 @@
                         android:id="@+id/manufacture_monthyear_label"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.55"
-                        android:text="Meter Manufacture"
+                        android:layout_weight="0.6"
+                        android:text="Manufacture *"
                         android:textSize="14sp" />
                     <TextView
                         android:layout_width="wrap_content"
@@ -198,7 +188,7 @@
                         android:layout_height="wrap_content"
                         android:layout_width="0dp"
                         android:text="Comment "
-                        android:layout_weight="0.55"
+                        android:layout_weight="0.6"
                         android:textSize="14sp" />
                     <TextView
                         android:layout_width="wrap_content"
@@ -248,7 +238,7 @@
                         android:id="@+id/api_call_status_label"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="API Post status"
+                        android:text="Upload Status"
                         android:layout_weight="0.7"
                         android:visibility="gone"
                         android:layout_marginEnd="10dp"
@@ -284,7 +274,5 @@
                     tools:ignore="TextSizeCheck" />
 
 
-            </LinearLayout>
-        </ScrollView>
     </LinearLayout>
 </FrameLayout>

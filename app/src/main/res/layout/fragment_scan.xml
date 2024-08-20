@@ -148,7 +148,7 @@
                 android:id="@+id/api_call_status_label"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="API Post Status"
+                android:text="Upload Status"
                 android:layout_weight="0.35"
                 android:layout_marginEnd="10dp"
                 android:visibility="gone"

@@ -273,16 +273,16 @@ public class ManualFragment  extends BaseFragment {
             Toast.makeText(getActivity(), "Meter Type is invalid", Toast.LENGTH_SHORT).show();
             return;
         }
-        if(Pattern.matches(msn_pattern, msn)!=true){
-            Toast.makeText(getActivity(), "Please enter a valid 7-digit MSN", Toast.LENGTH_SHORT).show();
-            return;
-        }
         if(Pattern.matches(make_pattern,meter_make)!=true){
             Toast.makeText(getActivity(), "Meter Make is invalid", Toast.LENGTH_SHORT).show();
             return;
         }
         if(Pattern.matches(model_pattern,meter_model_type)!=true){
             Toast.makeText(getActivity(), "Please enter a valid 5-character alphanumeric Meter Model", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(Pattern.matches(msn_pattern, msn)!=true){
+            Toast.makeText(getActivity(), "Please enter a valid 7-digit MSN", Toast.LENGTH_SHORT).show();
             return;
         }
         if(Pattern.matches(meter_yearmonth_pattern,meter_yearmonth)!=true){
@@ -367,8 +367,9 @@ public class ManualFragment  extends BaseFragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getActivity(),  "Request failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        text_api_call_status.setText("Request failed: " + e.getMessage());
+                        Toast.makeText(getActivity(), "Sorry, something went wrong. Please try again later.", Toast.LENGTH_SHORT).show();
+                        text_api_call_status.setTextColor(getResources().getColor(R.color.black) ); // Change text color to red
+                        text_comment.setText("Error: Please try again later.");
                     }
                 });
             }
@@ -381,17 +382,18 @@ public class ManualFragment  extends BaseFragment {
                         @Override
                         public void run() {
                             System.out.println("Server response: " + responseBody);
-                            Toast.makeText(getActivity(), "Request successful. Response code: " + response.code() + " - " + responseBody, Toast.LENGTH_SHORT).show();
-                            text_api_call_status.setText(response.code()+", Request successful.");
+                            Toast.makeText(getActivity(), "Recorded Successfully", Toast.LENGTH_SHORT).show();
+                            text_api_call_status.setTextColor(getResources().getColor(R.color.green) ); // Change text color to red
+                            text_api_call_status.setText("Recorded Successfully");
                         }
                     });
                 } else {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            System.out.println("Server response: " + responseBody);
-                            Toast.makeText(getActivity(), "Request unsuccessful. Response code: " + response.code() + " - " + responseBody, Toast.LENGTH_SHORT).show();
-                            text_api_call_status.setText(response.code()+", Request unsuccessful." );
+                            Toast.makeText(getActivity(), "Record Failed", Toast.LENGTH_SHORT).show();
+                            text_api_call_status.setTextColor(getResources().getColor(R.color.red) ); // Change text color to red
+                            text_api_call_status.setText("Record Failed" );
                         }
                     });
                 }

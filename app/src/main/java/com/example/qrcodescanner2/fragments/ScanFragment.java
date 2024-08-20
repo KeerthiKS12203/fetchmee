@@ -49,6 +49,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -130,6 +131,7 @@ public class ScanFragment extends BaseFragment {
                     sendScannedDataToServer(globalVariables.getMeterRatings(),
                             String.valueOf(globalVariables.getCurrentLatitude()),
                             String.valueOf(globalVariables.getCurrentLongitude()));
+                    scanBtn.setEnabled(false);
 
                 } else {
                     Toast.makeText(getActivity(),
@@ -176,15 +178,22 @@ public class ScanFragment extends BaseFragment {
             barcodeView.getBarcodeView().setDecoderFactory(new DefaultDecoderFactory(formats));
 
             barcodeView.decodeContinuous(new BarcodeCallback() {
+
                 @Override
                 public void barcodeResult(BarcodeResult result) {
                     str = result.getText();
                     if (str != null) {
                         textStr.setText(str);
                         GlobalVariables globalVariables = GlobalVariables.getInstance();
-                        globalVariables.setMeterRatings(str);
-                        strObtained = true;
-                        getLastLocation();
+                        if(str.equals( globalVariables.getMeterRatings())){
+                            scanBtn.setEnabled(false);
+                        }
+                        else{
+                            globalVariables.setMeterRatings(str);
+                            strObtained = true;
+                            getLastLocation();
+                        }
+
                         barcodeView.pause(); // Pause scanning to prevent rapid re-scans
                         barcodeView.resume(); // Resume scanning after processing
                     } else {
@@ -201,6 +210,7 @@ public class ScanFragment extends BaseFragment {
             Log.e("ScanFragment", "scannerContainer is null. Cannot setup barcode view.");
         }
     }
+
 
     private void startScan() {
         if (scannerContainer != null) {

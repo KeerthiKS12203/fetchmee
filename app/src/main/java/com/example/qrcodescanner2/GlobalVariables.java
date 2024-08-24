@@ -6,14 +6,76 @@ public class GlobalVariables  extends Application {
     private static GlobalVariables instance;
 
     private String AndroidId;
-    private String MeterRatings;
-    private String CurrentLocation;
+    private String MeterRatings="QR String";
+    private String CurrentLocation="Location";
     private String SERVER_URL;
     private String Server_domain_name;
     private String Server_port_no;
     private double CurrentLatitude, CurrentLongitude;
     private String AdminUserId="fetchmee";
     private String AdminPassword="fetchmee";
+
+    public String getManualMSN() {
+        return ManualMSN;
+    }
+
+    public void setManualMSN(String manualMSN) {
+        ManualMSN = manualMSN;
+    }
+
+    public String getManualModel() {
+        return ManualModel;
+    }
+
+    public void setManualModel(String manualModel) {
+        ManualModel = manualModel;
+    }
+
+    public int getManualMeterTypeOption() {
+        return ManualMeterTypeOption;
+    }
+
+    public void setManualMeterTypeOption(int manualMeterTypeOption) {
+        ManualMeterTypeOption = manualMeterTypeOption;
+    }
+
+    public String getManualManufacture() {
+        return ManualManufacture;
+    }
+
+    public void setManualManufacture(String manualManufacture) {
+        ManualManufacture = manualManufacture;
+    }
+
+    public String getManualMake() {
+        return ManualMake;
+    }
+
+    public void setManualMake(String manualMake) {
+        ManualMake = manualMake;
+    }
+
+    public String getManualComment() {
+        return ManualComment;
+    }
+
+    public void setManualComment(String manualComment) {
+        ManualComment = manualComment;
+    }
+
+    private int ManualMeterTypeOption=0;
+    private String ManualMake="CSA";
+    private String ManualModel, ManualManufacture, ManualComment, ManualMSN;
+
+    public String getScanComment() {
+        return ScanComment;
+    }
+
+    public void setScanComment(String scanComment) {
+        ScanComment = scanComment;
+    }
+
+    public String ScanComment;
 
     public String getHTTP_protocol() {
         return HTTP_protocol;
@@ -74,7 +136,6 @@ public class GlobalVariables  extends Application {
         // Initialize the global variable here
         AndroidId = null;
 
-        CurrentLocation=null;
         Server_domain_name="devmdas.fetchmee.in";
         Server_port_no="15000";
         HTTP_protocol="http";

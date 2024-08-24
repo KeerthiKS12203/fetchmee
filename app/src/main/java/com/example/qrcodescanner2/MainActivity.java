@@ -329,6 +329,22 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
     FrameLayout frameLayout;
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Clear the global state when the activity is destroyed
+        GlobalVariables globalVariables=GlobalVariables.getInstance();
+        globalVariables.setMeterRatings("QR String");
+        globalVariables.setCurrentLocation("Location");
+        globalVariables.setScanComment(null);
+        globalVariables.setManualMeterTypeOption(0);
+        globalVariables.setManualMake("CSA");
+        globalVariables.setManualModel(null);
+        globalVariables.setManualMSN(null);
+        globalVariables.setManualManufacture(null);
+        globalVariables.setManualComment(null);
+
+    }
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {

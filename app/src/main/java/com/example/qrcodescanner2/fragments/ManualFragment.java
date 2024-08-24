@@ -91,6 +91,7 @@ public class ManualFragment  extends BaseFragment {
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
+        GlobalVariables globalVariables=GlobalVariables.getInstance();
 
         // Create an ArrayAdapter using the string array and a default spinner layout.
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -102,13 +103,70 @@ public class ManualFragment  extends BaseFragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner.
         dropdown_meter_type.setAdapter(adapter);
-        dropdown_meter_type.setSelection(0);
+        dropdown_meter_type.setSelection(globalVariables.getManualMeterTypeOption());
+        text_meter_make.setText(globalVariables.getManualMake());
+        text_meter_model.setText(globalVariables.getManualModel());
+        text_msn.setText(globalVariables.getManualMSN());
+        text_manufacture_yearmonth.setText(globalVariables.getManualManufacture());
+        text_comment.setText(globalVariables.getManualComment());
+
 
 
         manual_submit_details.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 validateMeterRatings(dropdown_meter_type.getSelectedItem().toString(), text_msn.getText().toString(), text_meter_make.getText().toString(), text_meter_model.getText().toString(), text_manufacture_yearmonth.getText().toString());
+            }
+        });
+
+        text_meter_make.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No action needed before text is changed
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // No action needed while text is changing
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                globalVariables.setManualMake(text_meter_make.getText().toString());
+            }
+        });
+
+        text_meter_model.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No action needed before text is changed
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // No action needed while text is changing
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                globalVariables.setManualModel(text_meter_model.getText().toString());
+            }
+        });
+
+        text_msn.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No action needed before text is changed
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // No action needed while text is changing
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                globalVariables.setManualMSN(text_msn.getText().toString());
             }
         });
 
@@ -191,54 +249,27 @@ public class ManualFragment  extends BaseFragment {
                 text_manufacture_yearmonth.setSelection(formattedInput.length());
 
                 mEditing = false;
+                globalVariables.setManualManufacture(text_manufacture_yearmonth.getText().toString());
+
             }
-
-
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                if (mEditing) return; // Avoid recursive calls
-//
-//                mEditing = true;
-//
-//                // Remove any non-numeric characters
-//                String input = s.toString().replaceAll("[^0-9]", "");
-//
-//                // Limit to 6 characters for MMYYYY
-//                if (input.length() > 6) {
-//                    input = input.substring(0, 6);
-//                }
-//
-//                // Format input as MM/YYYY
-//                String formattedInput = "";
-//                if (input.length() > 0) {
-//                    // Add month part
-//                    formattedInput = input.length() > 2 ? input.substring(0, 2) : input;
-//                    // Add slash and year part
-//                    if (input.length() > 2) {
-//                        formattedInput += "/" + input.substring(2);
-//                    }
-//                }
-//
-//                // Validate month range
-//                if (formattedInput.length() >= 2 && Integer.parseInt(formattedInput.substring(0, 2)) > 12) {
-//                    // Set month part to 12 if invalid month is entered
-//                    formattedInput = "12/" + formattedInput.substring(3);
-//                }
-//
-//                // Set the formatted text
-//                s.clear();
-//                s.append(formattedInput);
-//
-//                // Move cursor to the end of the input
-//                int length = s.length();
-//                if (length > 0) {
-//                    text_manufacture_yearmonth.setSelection(length);
-//                }
-//
-//                mEditing = false;
-//            }
         });
 
+        text_comment.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No action needed before text is changed
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // No action needed while text is changing
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                globalVariables.setManualComment(text_comment.getText().toString());
+            }
+        });
 
 
 
@@ -252,6 +283,9 @@ public class ManualFragment  extends BaseFragment {
             // An item is selected. You can retrieve the selected item using
             // parent.getItemAtPosition(pos).
             parent.getItemAtPosition(pos);
+            GlobalVariables globalVariables=GlobalVariables.getInstance();
+            globalVariables.setManualMeterTypeOption(pos);
+
         }
 
         public void onNothingSelected(AdapterView<?> parent) {
@@ -261,7 +295,7 @@ public class ManualFragment  extends BaseFragment {
 
     private void resetField(TextView textView) {
         textView.setError(null);
-        textView.setBackgroundResource(android.R.drawable.editbox_dropdown_light_frame); // Reset to default background
+        textView.setBackgroundResource(android.R.drawable.edit_text); // Reset to default background
     }
     private void validateMeterRatings(String ct_ratings, String msn, String meter_make, String meter_model_type, String meter_yearmonth) {
         System.out.println("Validating");
@@ -348,7 +382,7 @@ public class ManualFragment  extends BaseFragment {
                 public void onSuccess(Location location) {
                     // Handle the location result
                     if(location!=null){
-                        loc="Latitude    : "+location.getLatitude()+"\nLongitude : "+location.getLongitude();
+                        loc = "Lat: " + location.getLatitude() + "\nLng: " + location.getLongitude();
                         GlobalVariables globalVariables=GlobalVariables.getInstance();
                         globalVariables.setCurrentLatitude(location.getLatitude());
                         globalVariables.setCurrentLongitude(location.getLongitude());
@@ -425,6 +459,7 @@ public class ManualFragment  extends BaseFragment {
                             Toast.makeText(getActivity(), "Recorded Successfully", Toast.LENGTH_SHORT).show();
                             text_api_call_status.setTextColor(getResources().getColor(R.color.green) ); // Change text color to red
                             text_api_call_status.setText("Recorded Successfully");
+//                            manual_submit_details.setEnabled(false);
                         }
                     });
                 } else {

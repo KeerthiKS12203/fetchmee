@@ -21,6 +21,15 @@
             android:layout_marginBottom="30dp" />
 
 
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
                 <!-- CT Ratio -->
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -47,6 +56,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:minHeight="20dp"
+                        android:background="@android:drawable/edit_text"
                         android:textSize="14sp"
                         tools:ignore="TouchTargetSizeCheck" />
                 </LinearLayout>
@@ -79,6 +89,7 @@
                         android:hint="Make"
                         android:singleLine="true"
                         android:text="CPS"
+                        android:background="@android:drawable/edit_text"
                         android:textSize="14sp"
                         tools:ignore="TouchTargetSizeCheck" />
                 </LinearLayout>
@@ -112,6 +123,7 @@
                         android:maxLength="5"
                         android:singleLine="true"
                         android:textSize="14sp"
+                        android:background="@android:drawable/edit_text"
                         tools:ignore="TouchTargetSizeCheck" />
                 </LinearLayout>
 
@@ -144,6 +156,7 @@
                         android:maxLength="7"
                         android:singleLine="true"
                         android:textSize="14sp"
+                        android:background="@android:drawable/edit_text"
                         tools:ignore="TouchTargetSizeCheck" />
                 </LinearLayout>
 
@@ -175,6 +188,7 @@
                         android:hint="MM/YYYY"
                         android:singleLine="true"
                         android:textSize="14sp"
+                        android:background="@android:drawable/edit_text"
                         tools:ignore="TouchTargetSizeCheck" />
                 </LinearLayout>
 
@@ -195,19 +209,19 @@
                         android:layout_height="wrap_content"
                         android:text=":"
                         android:textSize="16sp" />
-
-
                     <EditText
                         android:id="@+id/text_comment"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:hint="Type your comment here"
-                        android:lines="3"
+                        android:inputType="textMultiLine"
                         android:maxLength="50"
                         android:minHeight="48dp"
                         android:paddingStart="6dp"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        android:background="@android:drawable/edit_text"
+                        android:imeOptions="actionDone" />
                 </LinearLayout>
 
                 <!-- Meter Ratings -->
@@ -272,6 +286,8 @@
                     android:text="Submit"
                     android:textSize="14dp"
                     tools:ignore="TextSizeCheck" />
+            </LinearLayout>
+        </ScrollView>
 
 
     </LinearLayout>

@@ -259,8 +259,18 @@ public class ManualFragment  extends BaseFragment {
         }
     }
 
-    private void validateMeterRatings(String ct_ratings, String msn,String meter_make, String meter_model_type ,String meter_yearmonth) {
+    private void resetField(TextView textView) {
+        textView.setError(null);
+        textView.setBackgroundResource(android.R.drawable.editbox_dropdown_light_frame); // Reset to default background
+    }
+    private void validateMeterRatings(String ct_ratings, String msn, String meter_make, String meter_model_type, String meter_yearmonth) {
         System.out.println("Validating");
+
+        resetField(text_msn);
+        resetField(text_meter_make);
+        resetField(text_meter_model);
+        resetField(text_manufacture_yearmonth);
+
 
         String ct_ratings_pattern = "^([0-9]{3})[/-]([0-9]{0,3})$";
         String meter_yearmonth_pattern = "^(0[1-9]|1[0-2])[/]([0-9]{4})$";
@@ -268,35 +278,65 @@ public class ManualFragment  extends BaseFragment {
         String model_pattern = "^[A-Z0-9]{5}$";
         String make_pattern = "^[A-Za-z]+$";
 
+        // Check if each field is filled
 
-        if(!(ct_ratings.equals("1") || ct_ratings.equals("3"))){
+//        if (ct_ratings.isEmpty()) {
+//            highlightField(dropdown_meter_type, "Meter Type is required");
+//            return;
+//        }
+        if (meter_make.isEmpty()) {
+            highlightField(text_meter_make, "Meter Make is required");
+            return;
+        }
+        if (meter_model_type.isEmpty()) {
+            highlightField(text_meter_model, "Meter Model is required");
+            return;
+        }
+        if (msn.isEmpty()) {
+            highlightField(text_msn, "MSN is required");
+            return;
+        }
+        if (meter_yearmonth.isEmpty()) {
+            highlightField(text_manufacture_yearmonth, "Month/Year is required");
+            return;
+        }
+
+        // Validate each field
+        if (!(ct_ratings.equals("1") || ct_ratings.equals("3"))) {
             Toast.makeText(getActivity(), "Meter Type is invalid", Toast.LENGTH_SHORT).show();
             return;
         }
-        if(Pattern.matches(make_pattern,meter_make)!=true){
+        if (!Pattern.matches(make_pattern, meter_make)) {
             Toast.makeText(getActivity(), "Meter Make is invalid", Toast.LENGTH_SHORT).show();
             return;
         }
-        if(Pattern.matches(model_pattern,meter_model_type)!=true){
+        if (!Pattern.matches(model_pattern, meter_model_type)) {
             Toast.makeText(getActivity(), "Please enter a valid 5-character alphanumeric Meter Model", Toast.LENGTH_SHORT).show();
             return;
         }
-        if(Pattern.matches(msn_pattern, msn)!=true){
+        if (!Pattern.matches(msn_pattern, msn)) {
             Toast.makeText(getActivity(), "Please enter a valid 7-digit MSN", Toast.LENGTH_SHORT).show();
             return;
         }
-        if(Pattern.matches(meter_yearmonth_pattern,meter_yearmonth)!=true){
+        if (!Pattern.matches(meter_yearmonth_pattern, meter_yearmonth)) {
             Toast.makeText(getActivity(), "Month/Year is invalid", Toast.LENGTH_SHORT).show();
             return;
         }
-        meter_ratings=ct_ratings+", "+meter_make+", "+meter_model_type+", "+", "+msn+", "+meter_yearmonth;
-        GlobalVariables globalVariables=GlobalVariables.getInstance();
+
+        // If all fields are valid, set the meter ratings
+        meter_ratings = ct_ratings + ", " + meter_make + ", " + meter_model_type + ", " + msn + ", " + meter_yearmonth;
+        GlobalVariables globalVariables = GlobalVariables.getInstance();
         globalVariables.setMeterRatings(meter_ratings);
         text_meter_ratings.setText(meter_ratings);
         text_meter_ratings.setVisibility(View.VISIBLE);
         getLastLocation();
     }
 
+    private void highlightField(TextView textView, String message) {
+        textView.setError(message);
+        textView.requestFocus();
+        textView.setBackgroundResource(R.drawable.error_background); // Set a red background to highlight the field
+    }
     private void getLastLocation() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
             // Request high accuracy location

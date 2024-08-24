@@ -1,16 +1,24 @@
 package com.example.qrcodescanner2.fragments;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.SavedStateViewModelFactory;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.provider.Settings;
 import android.util.Log;
@@ -64,15 +72,20 @@ public class ScanFragment extends BaseFragment {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 101;
+    private static final float LIGHT_THRESHOLD = 7.0f; // Threshold for turning on flash
 
     private FusedLocationProviderClient fusedLocationProviderClient;
     private Button scanBtn;
     private TextView textStr, textLoc, textAndroidId, text_comment, textApiCallStatus, apiCallStatusLabel, apiCallStatusColon;
     private String str, loc;
     private boolean locObtained = false, strObtained = false;
-    private FrameLayout scannerContainer;
+    private ConstraintLayout scannerContainer;
     private CompoundBarcodeView barcodeView;
     private static String SERVER_URL;
+
+    private SensorManager sensorManager;
+    private Sensor lightSensor;
+
 
     public ScanFragment() {
         // Required empty public constructor
@@ -81,9 +94,15 @@ public class ScanFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         // Check for permissions
         checkPermissions();
+        // Initialize SensorManager and light sensor
+        sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+        lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -131,12 +150,12 @@ public class ScanFragment extends BaseFragment {
                     sendScannedDataToServer(globalVariables.getMeterRatings(),
                             String.valueOf(globalVariables.getCurrentLatitude()),
                             String.valueOf(globalVariables.getCurrentLongitude()));
-                    scanBtn.setEnabled(false);
+
 
                 } else {
                     Toast.makeText(getActivity(),
                             "Data not complete. Ensure QR code is scanned and location is obtained.",
-                            Toast.LENGTH_SHORT).show();
+                            Toast.LENGTH_LONG).show();
                 }
             } catch (JSONException e) {
                 throw new RuntimeException(e);
@@ -148,12 +167,12 @@ public class ScanFragment extends BaseFragment {
 
     private void setupBarcodeView() {
         if (scannerContainer != null) {
-            barcodeView = new CompoundBarcodeView(getContext());
-            barcodeView.setLayoutParams(new FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.MATCH_PARENT
-            ));
-            scannerContainer.addView(barcodeView);
+//            barcodeView = new CompoundBarcodeView(getContext());
+//            barcodeView.setLayoutParams(new FrameLayout.LayoutParams(
+//                    FrameLayout.LayoutParams.MATCH_PARENT,
+//                    FrameLayout.LayoutParams.MATCH_PARENT
+//            ));
+//            scannerContainer.addView(barcodeView);
 
             List<BarcodeFormat> formats = Arrays.asList(
                     BarcodeFormat.UPC_A,
@@ -190,6 +209,11 @@ public class ScanFragment extends BaseFragment {
                         }
                         else{
                             globalVariables.setMeterRatings(str);
+                            apiCallStatusLabel.setVisibility(View.GONE);
+                            apiCallStatusColon.setVisibility(View.GONE);
+                            textApiCallStatus.setVisibility(View.GONE);
+                            textApiCallStatus.setTextColor(getResources().getColor(R.color.black) ); // Change text color to black
+                            textApiCallStatus.setText("Upload Pending");
                             strObtained = true;
                             getLastLocation();
                         }
@@ -302,6 +326,7 @@ public class ScanFragment extends BaseFragment {
                     Toast.makeText(getActivity(), "Sorry, something went wrong. Please try again later.", Toast.LENGTH_SHORT).show();
                     textApiCallStatus.setTextColor(getResources().getColor(R.color.black) ); // Change text color to red
                     textApiCallStatus.setText("Error: Please try again later.");
+                    scanBtn.setEnabled(true);
                 });
             }
 
@@ -313,11 +338,13 @@ public class ScanFragment extends BaseFragment {
                         Toast.makeText(getActivity(), "Recorded Successfully", Toast.LENGTH_SHORT).show();
                         textApiCallStatus.setTextColor(getResources().getColor(R.color.green) ); // Change text color to red
                         textApiCallStatus.setText("Recorded Successfully");
+                        scanBtn.setEnabled(false);
 
                     } else {
                         Toast.makeText(getActivity(), "Record Failed", Toast.LENGTH_SHORT).show();
                         textApiCallStatus.setTextColor(getResources().getColor(R.color.red) ); // Change text color to red
                         textApiCallStatus.setText("Record Failed" );
+                        scanBtn.setEnabled(true);
                     }
                 });
             }
@@ -329,6 +356,7 @@ public class ScanFragment extends BaseFragment {
         super.onPause();
         if (barcodeView != null) {
             barcodeView.pause();
+            sensorManager.unregisterListener(lightSensorEventListener);
         }
     }
 
@@ -337,6 +365,33 @@ public class ScanFragment extends BaseFragment {
         super.onResume();
         if (barcodeView != null) {
             barcodeView.resume();
+            sensorManager.registerListener(lightSensorEventListener, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
     }
+
+    private final SensorEventListener lightSensorEventListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            float lightLevel = event.values[0];
+            if (lightLevel < LIGHT_THRESHOLD) {
+                try {
+                    barcodeView.setTorchOn(); // or barcodeView.setTorchOff();
+                } catch (RuntimeException e) {
+                    Log.e("CameraManager", "Failed to set torch on", e);
+                }
+            } else {
+                try {
+                    barcodeView.setTorchOff(); // or barcodeView.setTorchOff();
+                } catch (RuntimeException e) {
+                    Log.e("CameraManager", "Failed to set torch off", e);
+                }
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            // You can handle accuracy changes if needed
+        }
+    };
+
 }
